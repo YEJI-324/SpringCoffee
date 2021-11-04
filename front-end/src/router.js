@@ -97,19 +97,29 @@ const routes = [
     component: () => import('@/components/user/shop/ShopLayout.vue')
   },
   {
-    path: '/admin',
+    path: '/admin/:',
     name: 'AdminPage',
-    component: () => import('@/components/admin/AdminPage.vue')
+    component: () => import('@/components/admin/AdminPage.vue'),
+    children: [
+      {
+        path: "userlist",
+        component: () => import('@/components/admin/UserList.vue'),
+      },
+      {
+        path: "itemAdd",
+        component: () => import('@/components/admin/ItemAdd.vue'),
+      },
+    ]
   },
-  // {
-  //   path: '/:pathMatch(.*)*',
-  //   redirect: "/404"
-  // },
-  // {
-  //   path: '/404',
-  //   name: 'NotFoundPage',
-  //   component: () => import('@/components/user/NotFoundPage.vue')
-  // },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: "/404"
+  },
+  {
+    path: '/404',
+    name: 'NotFoundPage',
+    component: () => import('@/components/user/NotFoundPage.vue')
+  },
 ];
 
 export const router = createRouter({
