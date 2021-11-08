@@ -1,21 +1,21 @@
 package com.kosa.springcoffee.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.kosa.springcoffee.exception.NoStockException;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity(name = "sc_item")
 @Getter
 @Builder
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Item {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long itemNo;
 
     private String name;
@@ -58,7 +58,7 @@ public class Item {
     public void removeStock(int quantity) {
         int restStock = this.stockQuantity - quantity;
         if (restStock < 0) {
-            throw new RuntimeException("need more stock");
+            throw new NoStockException("상품 재고가 부족합니다.");
         }
         this.stockQuantity = restStock;
     }
