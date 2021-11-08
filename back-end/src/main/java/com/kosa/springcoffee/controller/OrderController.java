@@ -1,9 +1,7 @@
 package com.kosa.springcoffee.controller;
 
-import com.kosa.springcoffee.dto.OrderDTO2;
+import com.kosa.springcoffee.dto.OrderDTO;
 import com.kosa.springcoffee.dto.OrderHistDTO;
-import com.kosa.springcoffee.dto.PageResultDTO;
-import com.kosa.springcoffee.entity.Order;
 import com.kosa.springcoffee.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.security.Principal;
 import java.util.Optional;
 
 @RestController
@@ -29,10 +26,10 @@ public class OrderController {
 
     @PostMapping(value = "/")
     @ResponseBody
-    public ResponseEntity order(@RequestBody OrderDTO2 orderDTO2, String email){
+    public ResponseEntity order(@RequestBody OrderDTO orderDTO, String email){
         Long orderNo;
         try {
-            orderNo = orderService.create(orderDTO2, email);
+            orderNo = orderService.create(orderDTO, email);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);

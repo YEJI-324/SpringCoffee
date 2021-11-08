@@ -1,6 +1,6 @@
 package com.kosa.springcoffee.service;
 
-import com.kosa.springcoffee.dto.OrderDTO2;
+import com.kosa.springcoffee.dto.OrderDTO;
 import com.kosa.springcoffee.entity.*;
 import com.kosa.springcoffee.repository.ItemRepository;
 import com.kosa.springcoffee.repository.MemberRepository;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -61,7 +60,7 @@ public class OrderServiceTest {
         Item item = saveItem();
         Member member = saveMember();
 
-        OrderDTO2 orderDto = new OrderDTO2();
+        OrderDTO orderDto = new OrderDTO();
         orderDto.setCount(10);
         orderDto.setItemNo(item.getItemNo());
         Long orderId = orderService.create(orderDto, member.getEmail());
@@ -82,7 +81,7 @@ public class OrderServiceTest {
         Item item = saveItem();
         Member member = saveMember();
 
-        OrderDTO2 orderDto = new OrderDTO2();
+        OrderDTO orderDto = new OrderDTO();
         orderDto.setCount(10);
         orderDto.setItemNo(item.getItemNo());
 

@@ -1,7 +1,6 @@
 package com.kosa.springcoffee.service;
 
 import com.kosa.springcoffee.dto.OrderDTO;
-import com.kosa.springcoffee.dto.OrderDTO2;
 import com.kosa.springcoffee.dto.OrderHistDTO;
 import com.kosa.springcoffee.dto.OrderItemDTO;
 import com.kosa.springcoffee.entity.Item;
@@ -22,7 +21,6 @@ import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -49,15 +47,16 @@ public class OrderServiceImpl implements OrderService{
 //    }
 
     @Override
-    public Long create(OrderDTO2 orderDTO2, String email) {
-        Item item = itemRepository.findById(orderDTO2.getItemNo()).orElseThrow(EntityNotFoundException::new);
+    public Long create(OrderDTO orderDTO, String email) {
+        Item item = itemRepository.findById(orderDTO.getItemNo()).orElseThrow(EntityNotFoundException::new);
         Member member = memberRepository.findByEmail(email);
 
         List<OrderItem> orderItemList = new ArrayList<>();
 
 
-        OrderItem orderItem = OrderItem.createOrderItem(item, orderDTO2.getCount());
+        OrderItem orderItem = OrderItem.createOrderItem(item, orderDTO.getCount());
         orderItemList.add(orderItem);
+
         Order order = Order.createOrder(member, orderItemList);
         orderRepository.save(order);
 
@@ -109,6 +108,21 @@ public class OrderServiceImpl implements OrderService{
     public void cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
         order.cancel();
+    }
+
+    @Override
+    public Long cartOrder(List<OrderDTO> orderDTOList, String email) {
+        Member member = memberRepository.findByEmail(email);
+        List<OrderItem> orderItemList = new ArrayList<>();
+        for(OrderDTO orderDTO : orderDTOList){
+            Item item = itemRepository.findByItemNo(orderDTO.getItemNo());
+            OrderItem orderItem = OrderItem.createOrderItem(item, orderDTO.getCount());
+            orderItemList.add(orderItem);
+        }
+
+        Order order = Order.createOrder(member, orderItemList);
+        orderRepository.save(order);
+        return order.getOrderNo();
     }
 
 }
