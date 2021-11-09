@@ -79,6 +79,7 @@ public class CartServiceImpl implements CartService{
     public void changeCartItemCount(Long cartItemNo, int count) {
         CartItem cartItem = cartItemRepository.findByCartItemNo(cartItemNo);
         cartItem.changeCount(count);
+        cartItemRepository.save(cartItem);
     }
 
     @Override

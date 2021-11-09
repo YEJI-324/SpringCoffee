@@ -15,11 +15,11 @@ public class OrderItem{
     private Long orderItemNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_itemNo")
+    //@JoinColumn(name = "item_itemNo")
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="order_orderNo")
+    //@JoinColumn(name="order_orderNo")
     private Order order;
 
     private int allPrice;
@@ -40,7 +40,7 @@ public class OrderItem{
 
     //비즈니스로직 주문 취소
     public void cancel() {
-        getItem().addStock(count);
+        this.getItem().addStock(count);
     }
     //조회 로직 주문상품 전체 가격조회
     public int getTotalPrice() {

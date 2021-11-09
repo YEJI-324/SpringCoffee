@@ -3,10 +3,7 @@ package com.kosa.springcoffee.service;
 import com.kosa.springcoffee.dto.OrderDTO;
 import com.kosa.springcoffee.dto.OrderHistDTO;
 import com.kosa.springcoffee.dto.OrderItemDTO;
-import com.kosa.springcoffee.entity.Item;
-import com.kosa.springcoffee.entity.Member;
-import com.kosa.springcoffee.entity.Order;
-import com.kosa.springcoffee.entity.OrderItem;
+import com.kosa.springcoffee.entity.*;
 import com.kosa.springcoffee.repository.ItemRepository;
 import com.kosa.springcoffee.repository.MemberRepository;
 import com.kosa.springcoffee.repository.OrderItemRepository;
@@ -28,7 +25,6 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService{
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
 
@@ -58,6 +54,7 @@ public class OrderServiceImpl implements OrderService{
         orderItemList.add(orderItem);
 
         Order order = Order.createOrder(member, orderItemList);
+        order.setStatus(OrderStatus.ORDER);
         orderRepository.save(order);
 
         return order.getOrderNo();
