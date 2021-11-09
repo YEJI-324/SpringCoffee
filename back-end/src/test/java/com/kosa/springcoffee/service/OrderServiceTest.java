@@ -87,7 +87,7 @@ public class OrderServiceTest {
 
         // 주문 객체 저장
         Long orderId = orderService.create(orderDto, member.getEmail());
-
+        assertEquals(90, item.getStockQuantity());
         // 주문된 객체를 조회한 뒤에 주문 취소
         Order order = orderRepository.findByOrderNo(orderId);
         orderService.cancelOrder(orderId);

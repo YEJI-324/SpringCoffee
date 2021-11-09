@@ -102,9 +102,10 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public void cancelOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
+    public void cancelOrder(Long orderNo) {
+        Order order = orderRepository.findByOrderNo(orderNo);
         order.cancel();
+        orderRepository.save(order);
     }
 
     @Override
@@ -118,6 +119,7 @@ public class OrderServiceImpl implements OrderService{
         }
 
         Order order = Order.createOrder(member, orderItemList);
+        order.setStatus(OrderStatus.ORDER);
         orderRepository.save(order);
         return order.getOrderNo();
     }

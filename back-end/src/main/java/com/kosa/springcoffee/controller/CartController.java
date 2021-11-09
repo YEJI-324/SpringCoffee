@@ -96,19 +96,18 @@ public class CartController {
 
     @PostMapping(value = "/cart/cartOrder")
     @ResponseBody
-    public ResponseEntity orderCartItem(@RequestBody CartOrderDTO cartOrderDTO, String email){
+    public ResponseEntity orderCartItem(@RequestBody CartOrderDTO cartOrderDTO, Principal principal){
         List<CartOrderDTO> cartOrderDTOList = cartOrderDTO.getCartOrderDTOList();
-        Member member =  memberRepository.findByEmail(email);
         if (cartOrderDTOList == null || cartOrderDTOList.size() == 0){
             return new ResponseEntity<String>("상품이 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
 
         for (CartOrderDTO dto : cartOrderDTOList){
-            if(cartService.validateCartItem(dto.getCartItemNo(), member.getName()))
+            if(cartService.validateCartItem(dto.getCartItemNo(), principal.getName()))
                 return new ResponseEntity<String>("자신의 카트가 아닙니다.", HttpStatus.FORBIDDEN);
         }
-        Long orderNo = cartService.orderCartItem(cartOrderDTOList, member.getName());
+        Long orderNo = cartService.orderCartItem(cartOrderDTOList, principal.getName());
         return new ResponseEntity<Long>(orderNo, HttpStatus.OK);
     }
 

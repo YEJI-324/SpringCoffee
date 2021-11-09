@@ -58,6 +58,7 @@ public class OrderController {
         if(!orderService.validateOrder(orderNo, principal.getName())){
             return new ResponseEntity<String>("주문취소권한이 없습니다", HttpStatus.FORBIDDEN);
         }
+
         orderService.cancelOrder(orderNo);
         return new ResponseEntity<Long>(orderNo, HttpStatus.OK);
     }
