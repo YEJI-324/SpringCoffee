@@ -2,6 +2,7 @@ package com.kosa.springcoffee.controller;
 
 import com.kosa.springcoffee.dto.CartDetailDTO;
 import com.kosa.springcoffee.dto.CartItemDTO;
+import com.kosa.springcoffee.dto.CartItemTestDTO;
 import com.kosa.springcoffee.dto.CartOrderDTO;
 import com.kosa.springcoffee.entity.CartItem;
 import com.kosa.springcoffee.entity.Member;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,30 +31,37 @@ public class CartController {
     private final CartItemRepository cartItemRepository;
 
 
-    @PostMapping("/cart")
-    @ResponseBody
-    public ResponseEntity cart(@RequestBody CartItemDTO cartItemDTO,Principal principal){
-        Long cartItemNo;
-
+//    @PostMapping("/cart")
+//    @ResponseBody
+//    public ResponseEntity cart(@RequestBody CartItemDTO cartItemDTO,Principal principal){
+//        Long cartItemNo;
+//
 //        try{
 //            cartItemNo = cartService.create(cartItemDTO, principal.getName());
 //        }catch (Exception e){
 //            e.printStackTrace();
 //            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 //        }
-        System.out.println("logloglog" + principal.getName() + " " + cartItemDTO.getItemNo()  + cartItemDTO.getCount());
-        cartItemNo = cartService.create(cartItemDTO,principal.getName());
+//        System.out.println("logloglog" + principal.getName() + " " + cartItemDTO.getItemNo()  + cartItemDTO.getCount());
+//        cartItemNo = cartService.create(cartItemDTO,principal.getName());
+//        return new ResponseEntity<Long>(cartItemNo, HttpStatus.OK);
+//
+//    }
+
+    @PostMapping("/cart")
+    @ResponseBody
+    public ResponseEntity cart(@RequestBody CartItemTestDTO cartItemDTO){
+        Long cartItemNo;
+        CartItemDTO dto = new CartItemDTO();
+        dto.setCount(cartItemDTO.getCount());
+        dto.setItemNo(cartItemDTO.getItemNo());
+        Member member = memberRepository.findByEmail(cartItemDTO.getEmail());
+        System.out.println("logloglog" + member + " " + cartItemDTO.getItemNo()  + cartItemDTO.getCount());
+        cartItemNo = cartService.create(dto,member.getEmail());
         return new ResponseEntity<Long>(cartItemNo, HttpStatus.OK);
 
     }
 
-//    @GetMapping(value = "/cart")
-//    public String cartList(Principal principal, Model model) {
-//
-//        List<CartDetailDTO> cartDetailDTOList = cartService.getCartList(principal.getName());
-//        model.addAttribute("cartItems", cartDetailDTOList);
-//        return "cart/cartList";
-//    }
 
     @GetMapping(value = "/cart")
     public ResponseEntity cartList(Principal principal, Model model) {

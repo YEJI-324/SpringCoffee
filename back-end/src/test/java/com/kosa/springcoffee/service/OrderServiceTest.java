@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -19,10 +20,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 @SpringBootTest
-@RunWith(SpringRunner.class)
-@WebAppConfiguration
 @Transactional
+@RunWith(SpringJUnit4ClassRunner.class)
 public class OrderServiceTest {
 
     @Autowired
@@ -44,7 +45,6 @@ public class OrderServiceTest {
         item.setContent("테스트 상품 상세 설명");
         item.setStockQuantity(100);
         item.setCategory("coffee");
-        item.setImage("null");
         return itemRepository.save(item);
     }
 

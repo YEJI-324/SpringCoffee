@@ -45,7 +45,7 @@ public class Order extends BaseEntityOrder{
 
         this.setStatus(OrderStatus.CANCEL);
         for (OrderItem orderItem : orderItems) {
-            orderItem.cancel(orderItem.getCount());
+            orderItem.cancel();
         }
     }
 

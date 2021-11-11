@@ -44,7 +44,6 @@ public class CartServiceTests {
         item.setContent("테스트 상품 상세 설명");
         item.setStockQuantity(100);
         item.setCategory("coffee");
-        item.setImage("null");
         return itemRepository.save(item);
     }
 

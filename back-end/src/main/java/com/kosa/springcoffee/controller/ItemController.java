@@ -8,7 +8,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v2")
@@ -16,6 +21,26 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+
+
+    @PostMapping("/new")
+    public ResponseEntity createWithImg(@RequestBody ItemFormDTO itemFormDTO, @RequestParam(name = "itemImgFile")List<MultipartFile> itemImgFileList){
+        if (itemImgFileList.get(0).isEmpty() && itemFormDTO.getItemNo() == null){
+            return new ResponseEntity<String>("첫번째 이미지는 필수", HttpStatus.FORBIDDEN);
+        }
+
+        try {
+            itemService.createWithImg(itemFormDTO, itemImgFileList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<String>("에러 발생", HttpStatus.FORBIDDEN);
+        }
+
+        return new ResponseEntity<Long>(itemFormDTO.getItemNo(), HttpStatus.OK);
+
+
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<Long> create(@RequestBody ItemDTO dto){

@@ -35,9 +35,11 @@ public class CartServiceImpl implements CartService{
         if (cart == null){
             cart = Cart.createCart(member);
             cartRepository.save(cart);
+
         }
 
-        Item item = itemRepository.findById(cartItemDTO.getItemNo()).orElseThrow(EntityNotFoundException::new);
+        Item item = itemRepository.findByItemNo(cartItemDTO.getItemNo());
+        //Item item = itemRepository.findById(cartItemDTO.getItemNo()).orElseThrow(EntityNotFoundException::new);
         CartItem cartItem = cartItemRepository.findByCartNoAndItemNo(cart.getCartNo(), item.getItemNo());
 
         if (cartItem == null){
@@ -46,6 +48,7 @@ public class CartServiceImpl implements CartService{
         }
         else{
             cartItem.addCount(cartItemDTO.getCount());
+            cartItemRepository.save(cartItem);
         }
         return cartItem.getCartItemNo();
     }

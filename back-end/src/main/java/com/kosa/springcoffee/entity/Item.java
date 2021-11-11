@@ -22,7 +22,6 @@ public class Item {
 
     private String content;
 
-    private String image;
 
     private int stockQuantity;
 
@@ -38,9 +37,6 @@ public class Item {
         this.content = content;
     }
 
-    public void changeImage(String image) {
-        this.image=image;
-    }
     public void changeStockQuantity(int stockQuantity){
         this.stockQuantity=stockQuantity;
     }
