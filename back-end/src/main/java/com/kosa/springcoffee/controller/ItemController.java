@@ -49,6 +49,8 @@ public class ItemController {
 
         return new ResponseEntity<>(num, HttpStatus.OK);
     }
+
+
     @DeleteMapping(value = "/{itemNo}", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> remove(@PathVariable("itemNo") Long itemNo){
         log.info(itemNo);

@@ -27,6 +27,7 @@ public class MemberUserDetailsService implements UserDetailsService {
     public void joinMember(Member member){
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         member.setPassword(passwordEncoder.encode(member.getPassword()));
+        validateDuplicateMember(member);
         memberRepository.save(member);
     }
 
@@ -56,5 +57,13 @@ public class MemberUserDetailsService implements UserDetailsService {
         authMember.setFromSocial(member.isFromSocial());
 
         return authMember;
+    }
+
+
+    private void validateDuplicateMember(Member member) {
+        Member findMember = memberRepository.findByEmail(member.getEmail());
+        if (findMember != null) {
+            throw new IllegalStateException("이미 존재하는 회원입니다.");
+        }
     }
 }

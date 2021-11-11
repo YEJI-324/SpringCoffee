@@ -23,35 +23,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public ApiCheckFilter apiCheckFilter(){
-//        return new ApiCheckFilter("/boards/**/*", jwtUtil());
-//    }
-//
-//    @Bean
-//    public JWTUtil jwtUtil(){
-//        return new JWTUtil();
-//    }
-//
-//    @Bean
-//    public ApiLoginFilter apiLoginFilter() throws Exception{
-//        ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/login", jwtUtil());
-//        apiLoginFilter.setAuthenticationManager(authenticationManager());
-//
-//        apiLoginFilter.setAuthenticationFailureHandler(new ApiLoginFailHandler());
-//        return apiLoginFilter;
-//    }
+    @Bean
+    public ApiCheckFilter apiCheckFilter(){
+        return new ApiCheckFilter("/v0/**/*", jwtUtil());
+    }
+
+    @Bean
+    public JWTUtil jwtUtil(){
+        return new JWTUtil();
+    }
+
+    @Bean
+    public ApiLoginFilter apiLoginFilter() throws Exception{
+        ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/login", jwtUtil());
+        apiLoginFilter.setAuthenticationManager(authenticationManager());
+
+        apiLoginFilter.setAuthenticationFailureHandler(new ApiLoginFailHandler());
+        return apiLoginFilter;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/sample/all", "/signUp").permitAll();
 
-        http.formLogin();
+        http.formLogin()
+                .loginPage("/v0/login")
+                .failureUrl("/v0/login");
         http.csrf().disable();
-        http.logout();
-
-//        http.addFilterBefore(apiCheckFilter(), UsernamePasswordAuthenticationFilter.class);
-//        http.addFilterBefore(apiLoginFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.logout().logoutSuccessUrl("/v0/login");
+        http.rememberMe().tokenValiditySeconds(60*60*24*7);
+        http.addFilterBefore(apiCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(apiLoginFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }
