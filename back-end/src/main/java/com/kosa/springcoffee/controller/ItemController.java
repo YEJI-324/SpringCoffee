@@ -28,7 +28,6 @@ public class ItemController {
         if (itemImgFileList.get(0).isEmpty() && itemFormDTO.getItemNo() == null){
             return new ResponseEntity<String>("첫번째 이미지는 필수", HttpStatus.FORBIDDEN);
         }
-
         try {
             itemService.createWithImg(itemFormDTO, itemImgFileList);
         } catch (Exception e) {
@@ -57,12 +56,28 @@ public class ItemController {
         return new ResponseEntity<>("removed", HttpStatus.OK);
     }
 
-    @PutMapping(value = "/{itemNo}", produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> modify(@RequestBody ItemDTO itemDTO){
-        log.info(itemDTO);
-        itemService.modify(itemDTO);
-        return new ResponseEntity<>("modified", HttpStatus.OK);
+
+    @PostMapping(value = "/{itemNo}")
+    public ResponseEntity modifyWithImg(@RequestBody ItemFormDTO itemFormDTO, @RequestParam(name = "itemImgFile")List<MultipartFile> itemImgFileList){
+        if (itemImgFileList.get(0).isEmpty() && itemFormDTO.getItemNo() == null){
+            return new ResponseEntity<String>("첫번째 이미지는 필수", HttpStatus.FORBIDDEN);
+        }
+        try {
+            itemService.modifyWithImg(itemFormDTO, itemImgFileList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<String>("에러 발생", HttpStatus.FORBIDDEN);
+        }
+
+        return new ResponseEntity<String>("modified", HttpStatus.OK);
     }
+
+//    @PutMapping(value = "/{itemNo}", produces = MediaType.TEXT_PLAIN_VALUE)
+//    public ResponseEntity<String> modify(@RequestBody ItemDTO itemDTO){
+//        log.info(itemDTO);
+//        itemService.modify(itemDTO);
+//        return new ResponseEntity<>("modified", HttpStatus.OK);
+//    }
 
     @GetMapping("/list")
     public PageResultDTO<ItemDTO, Item> readAll(PageRequestDTO pageRequestDTO) {
@@ -76,7 +91,13 @@ public class ItemController {
         return itemService.getCategory(pageRequestDTO);
     }
 
+    @GetMapping("/{itemNo}")
+    public ResponseEntity getItemDetail(@PathVariable("itemNo") Long itemNo){
+        ItemFormDTO itemFormDTO = itemService.getItemDetail(itemNo);
 
+        return new ResponseEntity<String>("아이템 상세정보",HttpStatus.OK);
+
+    }
 
 
 }

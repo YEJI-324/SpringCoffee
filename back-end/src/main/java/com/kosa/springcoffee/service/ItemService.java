@@ -11,7 +11,9 @@ import java.util.List;
 public interface ItemService {
     Long create(ItemDTO dto);
     Long createWithImg(ItemFormDTO itemFormDTO, List<MultipartFile> itemImgFileList) throws Exception;
+    ItemFormDTO getItemDetail(Long itemNo);
     void modify(ItemDTO dto);
+    Long modifyWithImg(ItemFormDTO itemFormDTO, List<MultipartFile> itemImgFileList) throws Exception;
     void remove(Long itemNo);
     PageResultDTO<ItemDTO, Item> readAll(PageRequestDTO requestDTO);
     PageResultDTO<ItemDTO, Item> getCategory(CategoryPageRequestDTO requestDTO);
