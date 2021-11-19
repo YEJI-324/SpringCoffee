@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="tab-bar">
-            <div class="tab-shop py-3" style="width:100%;">
+            <div class="tab-shop py-3">
                 <span class="tab-title">상품목록</span>            
             </div>
         </div>
@@ -34,8 +34,8 @@
                 <td> 총 가격 </td>
                 <td></td>
               </tr>
-              <tr class="product-item text-center" v-for="cart in this.$store.state.cartList" :key="cart.cartItemNo" >
-                  <td> <img :src="cart.image" alt=""></td>
+              <tr class="product-item" v-for="cart in this.$store.state.cartList" :key="cart.cartItemNo">
+                  <td></td><!-- <td> <img :src="cart.image" alt=""></td> -->
                   <td> {{cart.itemName}}</td>
                   <td> {{cart.price}}</td>
                   <td>
@@ -49,7 +49,7 @@
             </table>
             <span style="font-weight: 800; font-size: 16pt;"> {{price}} 원</span>
               <hr>
-              <button type="button" class="btn btn-success"><router-link to="/cart" style="text-decoration: none; color: white">내 장바구니로 이동</router-link></button>
+              <button type="button" class="btn btn-success text-reset" data-bs-dismiss="offcanvas" aria-label="Close"><router-link to="/cart" style="text-decoration: none; color: white">주문하기</router-link></button>
             </div>
           </div>
         </div>
@@ -60,11 +60,11 @@
               <img width="120" height="80" src="../../../assets/shop2.webp" role="presentation" class="" alt="">
               <div class="ProductListTechnologies__name" style="color: brown">전체보기</div>
           </div>
-          <div class="ProductListTechnologies__element me-2" @click="this.$store.dispatch('getItemCartegory', 'coffee')">
+          <div class="ProductListTechnologies__element me-2" @click="this.$store.dispatch('getItemCategory', 'coffee')">
               <img width="120" height="80" src="../../../assets/shop1.webp" role="presentation" class="" alt="">
               <div class="ProductListTechnologies__name">커피</div>
           </div>
-          <div class="ProductListTechnologies__element me-2" @click="this.$store.dispatch('getItemCartegory', 'tumbler')">            
+          <div class="ProductListTechnologies__element me-2" @click="this.$store.dispatch('getItemCategory', 'tumbler')">            
               <img width="120" height="80" src="../../../assets/tumbler.jpg" role="presentation" class="" alt="">
               <div class="ProductListTechnologies__name">텀블러</div>
           </div>
@@ -83,8 +83,10 @@
                 <td>가격</td>
                 <td> </td>
               </tr>
-            <tr class="product-item" v-for="(item, i) in this.$store.state.itemList" v-bind:key="item.itemId">
-                <td> <img width="120" height="80" ref="imageOutput" :src="item.image"> </td>
+            <tr class="product-item" v-for="(item, i) in this.$store.state.itemList" :key="i">
+                <td>
+                  <img width="100" height="100" alt="상품이미지" :src="thumbnail[i]">
+                </td>
                 <td @click="goItemDetail(item.itemNo)" > {{item.name}}</td>
                 <td> {{item.price}}</td>
                 <td>
@@ -110,26 +112,28 @@ export default {
     this.$store.dispatch('fetchItem');
     this.$store.dispatch('fetchCart');
   },
+
   data() {
     return {
         sum: 0,
         price: 0,
         count: [],
+        thumbnail: [],
     };
   },
+
   methods: {
     sumPrice(price, count) {
       this.sum=price*count;
     },
     postCart(item, count) {
-      axios.post(`/v4/cart`,
+      axios.post(`/v5/cart`,
       {
         itemNo : item.itemNo,
         count : count,
         email : this.$store.state.email
       })
       .then(res => {
-        this.$store.dispatch('fetchCart');
         console.log('success', JSON.stringify(res, null, 2))
       }).catch(err => {
         console.log('failed', err)
@@ -141,7 +145,7 @@ export default {
         return false;
       }
 
-      axios.patch('v4/cartItem', {
+      axios.patch('v5/cartItem', {
         cartItemNo : cart.cartItemNo,
         count : cart.count,
         email : this.$store.state.email
@@ -152,14 +156,27 @@ export default {
         console.log('failed', err)
       })
     },
+
     setCountP(cart) {
       cart.count++;
     },
     setCountM(cart) {
       cart.count--;
     },
+    fetchThumbnail() {
+      console.log('스타트')
+      for(let i=0; i<this.$store.state.itemList.length ; i++) {
+        console.log('반복')
+        axios.get(`/v2-2/thumbnail/${this.$store.state.itemList[i].fileId}`, {
+          responseType: 'blob'
+        }).then(res => {
+          console.log('끝')
+          this.thumbnail[i] = window.URL.createObjectURL(new Blob([res.data]))
+        })
+      }
+    },
     deleteCart(cart) {
-        axios.delete(`v4/${cart.cartItemNo}/${this.$store.state.email}`)
+        axios.delete(`v5/${cart.cartItemNo}/${this.$store.state.email}`)
         .then(res => {
           this.$store.dispatch('fetchCart');
           console.log('success', res)
@@ -184,27 +201,39 @@ export default {
   background-size : cover;
   position: relative;
 }
+
 .tab-shop {
   background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 150px;
+  display: table;
+  }
+
+.tab-title {
+    font-weight: bold;
+    font-size: 25pt;
+    color: white;
+    display: table-cell;
+    vertical-align: middle;
 }
+
 .bag {
     font-size: 26pt;
 }
+
 .bag:hover {
     color: green;
     font-size: 26pt;
     transition: 0.3s;
 }
-.tab-title {
-    font-size: 22pt;
-    color: white;
-}
+
 .outter-border{
     width: 60%;
     margin: auto;
 }
 .product-item {
     border: 0;
+
 }
 .product-item:hover{
     background-color: beige;
@@ -213,14 +242,17 @@ export default {
 .table{
     height: 60%;
 }
+
 .nav-link {
     text-decoration: none;
 }
+
 .plus:hover {
   cursor: pointer;
   color: green;
   transition: 0.2s;
 }
+
 .minus:hover {
   cursor: pointer;
   color: red;

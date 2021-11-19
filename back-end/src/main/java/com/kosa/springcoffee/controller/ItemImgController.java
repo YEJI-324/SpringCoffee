@@ -23,7 +23,7 @@ import java.io.InputStream;
 import static com.google.common.io.ByteStreams.toByteArray;
 
 @RestController
-@RequestMapping("/v2_2")
+@RequestMapping("/v2-2")
 @Log4j2
 @RequiredArgsConstructor
 public class ItemImgController {
@@ -49,7 +49,6 @@ public class ItemImgController {
         imageStream.close();
 
         return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
-
     }
     @CrossOrigin
     @GetMapping(

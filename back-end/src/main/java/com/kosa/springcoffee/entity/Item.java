@@ -71,6 +71,4 @@ public class Item {
         }
         this.stockQuantity = restStock;
     }
-
-
 }

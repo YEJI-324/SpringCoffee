@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v3")
+@RequestMapping("/v6")
 @Log4j2
 @RequiredArgsConstructor
 public class OrderController {
@@ -33,7 +33,7 @@ public class OrderController {
     private final OrderService orderService;
     private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
-    @PostMapping(value = "/")
+    @PostMapping(value = "/submit")
     @ResponseBody
     public ResponseEntity order(@RequestBody OrderDTO orderDTO){
         Long orderNo;
@@ -63,7 +63,16 @@ public class OrderController {
         return new ResponseEntity<Page<OrderHistDTO>>(orderHistDtos, HttpStatus.OK);
     }
 
-    @PostMapping("/cancel")
+
+    @GetMapping(value = {"/orders", "/orders/{page}"})
+    public ResponseEntity orderHist(@PathVariable(name = "page") Optional<Integer> page) {
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 4);
+
+        Page<OrderHistDTO> orderHistDtos = orderService.getOrderListForAdmin(pageable);
+        return new ResponseEntity<Page<OrderHistDTO>>(orderHistDtos, HttpStatus.OK);
+    }
+    
+    @PostMapping("/{orderNo}/{email}/cancel")
     @ResponseBody
     public ResponseEntity cancel(@RequestBody OrderCancelDTO dto){
         Member member = memberRepository.getByEmail(dto.getEmail());

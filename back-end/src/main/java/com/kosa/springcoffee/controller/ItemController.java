@@ -41,10 +41,8 @@ public class ItemController {
     private final ItemService itemService;
     private final ItemRepository itemRepository;
     private final ItemImgRepository itemImgRepository;
-    private final ItemImgService itemImgService;
 
-
-    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value="/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity create(@RequestParam(value="image") List<MultipartFile> files,
                        @RequestParam(value="name") String name,
@@ -62,7 +60,7 @@ public class ItemController {
                 .category(category)
                 .build();
 
-        Long num =itemService.createWithImg(requestDTO, files);
+        Long num = itemService.createWithImg(requestDTO, files);
         return new ResponseEntity<Long>(num, HttpStatus.OK);
 
 
@@ -142,17 +140,14 @@ public class ItemController {
 //        return new ResponseEntity<>(num, HttpStatus.OK);
 //    }
 
-
-
     @GetMapping("/list")
-    public PageResultDTO<ItemDTO, Item> readAll(PageRequestDTO pageRequestDTO) {
+    public ResponseEntity readAllItem() {
         log.info("상품 전체 조회");
-        return itemService.readAll(pageRequestDTO);
-    }
-    @GetMapping("/listItem")
-    public List<ItemReadDTO> readAllItem() {
-        log.info("상품 전체 조회");
-        return itemService.readAllItem();
+        List<Item> items = itemRepository.findAll();
+        List<ItemReadDTO> getItems = itemService.readAllItem();
+        if(items.size() != getItems.size())
+            return new ResponseEntity<String>("가져오기 실패", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<List<ItemReadDTO>>(getItems,HttpStatus.OK);
     }
 
     @GetMapping("/list/{category}")

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { router } from './router'
 
 let store = createStore({
-  state(){  // 데이터보관하고 싶으면 여기에 기재
+  state() {  // 데이터보관하고 싶으면 여기에 기재
     return {
       email: '',
       token: '',
@@ -11,6 +11,7 @@ let store = createStore({
       exp: 0,
       isLogin: false,
       cartNo: '',
+      thumbnail: [],
       itemList: [],
       itemDetail: {},
       cartList: [],
@@ -20,6 +21,8 @@ let store = createStore({
       qnaBoardList: [],
       qnaBoardDetail : {},
       memberProfile: {},
+      memberList:[],
+      memberDetail:{},
     }
   },
   mutations: { // 변경하길 원하는 것들은 이곳에다가 기재한다
@@ -52,7 +55,14 @@ let store = createStore({
     },
     setMemberProfile(state, member) {
       state.memberProfile = member;
+    },
+    setMemberList(state,payload){
+        state.memberList = payload;
+    },
+    setMemberDetail(state,payload){
+        state.memberDetail = payload;
     }
+
 
   },
   actions: {
@@ -70,6 +80,25 @@ let store = createStore({
             context.commit('setNoticeBoardList',response.data)
           })
     },
+    fetchNoticeBoardCategory(context, paramObj){
+      const page = paramObj.page;
+      const category = paramObj.category;
+
+      let url = '/v1/list';
+      let pageObj = {};
+
+      console.log(`카테고리 조회`);
+      
+      url = '/v2/list/' + category; // 'v1/list/notice'
+      pageObj = {
+        page: page
+      };
+      
+      axios.get(url, {params:pageObj})
+      .then(response =>{
+          context.commit('setNoticeBoardList', response.data)
+      });
+    },
     fetchNoticeBoardDetail(context, boardNo){
       axios.get(`/v1/${boardNo}`)
           .then(response =>{
@@ -85,7 +114,11 @@ let store = createStore({
     fetchItem(context) {
       axios.get(`/v2/list`)
         .then(response => {
-          context.commit('setItem', response.data.dtoList);
+          context.commit('setItem', response.data);
+          console.log('성공', response)
+          // context.commit('setItem', response.data);
+        }).catch(err => {
+          console.log('error', err)
         })
     },
     fetchItemDetail(context, itemNo){
@@ -168,6 +201,12 @@ let store = createStore({
             context.commit('setQnaBoardList', response.data);
         })
     },
+    fetchAdminQna(context,isAnswered){
+        axios.get(`/v3/list/all/${isAnswered}`,{params:{page:this.page}})
+            .then(response =>{
+                context.commit('setQnaBoardList', response.data)
+            });
+    },
     fetchLogin({dispatch}, loginForm){
       axios.post('/v5/login', loginForm)
         .then(response => {
@@ -193,7 +232,6 @@ let store = createStore({
         this.state.exp=result.exp;
       }
     },
-
     fetchMemberProfile(context) {
       axios.get('v5/mypage', {params:
       {email: this.state.email}})
@@ -208,13 +246,31 @@ let store = createStore({
       router.go('#')
     },
 
-    getItemCartegory(context, category) {
+    getItemCategory(context, category) {
       axios.get(`v2/list/${category}`)
         .then(res => {
           context.commit("setItem", res.data.dtoList);
         }).catch(err => {
             console.log('failed', err)
         })
+    },
+    fetchUserList(context){
+        axios.get('/v5/userlist')
+            .then(response => {
+                context.commit('setMemberList',response.data)
+            })
+    },
+    fetchAdminList(context){
+        axios.get('/v5/adminlist')
+            .then(response => {
+                context.commit('setMemberList',response.data)
+            })
+    },
+    fetchMemberDetail(context,email)  {
+        axios.get('/v5/mypage',{params:{email:email}})
+            .then(response =>{
+                context.commit('setMemberDetail',response.data)
+            })
     }
   },
 })
