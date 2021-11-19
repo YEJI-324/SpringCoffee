@@ -72,7 +72,7 @@ public class ItemImgController {
 
     @GetMapping(
             value = "/base64/{itemImgNo}",
-            produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE}
+            produces = {}
     )
     public ResponseEntity getImageBase64(@PathVariable Long itemImgNo) throws IOException{
         MultipartFile file = itemImgService.getMultipartFile(itemImgNo);
@@ -87,7 +87,7 @@ public class ItemImgController {
 
     @GetMapping(
             value = "/multipart/{itemImgNo}",
-            produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE}
+            produces = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.MULTIPART_MIXED_VALUE, MediaType.MULTIPART_RELATED_VALUE}
     )
     public ResponseEntity getImageMultipart(@PathVariable Long itemImgNo) throws IOException{
         MultipartFile file = itemImgService.getMultipartFile(itemImgNo);
