@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -90,6 +91,9 @@ public class FileHandler {
         return fileList;
 
     }
+
+
+
 
 
 }
